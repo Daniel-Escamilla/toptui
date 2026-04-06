@@ -5,8 +5,8 @@
 /*                         | |/ / | |_| |  \__ \   | |                        */
 /*                         |_|\_\  \___/  |___/    |_|                        */
 /*                                                                            */
-/*   File:     process.rs               Project:  proc-monitor                */
-/*   Created:  2026-04-01               Updated:  2026-04-05                  */
+/*   File:     process.rs               Project:  toptui                      */
+/*   Created:  2026-04-01               Updated:  2026-04-06                  */
 /*   License:  MIT OR Apache-2.0                                              */
 /*                                                                            */
 /* ************************************************************************** */
