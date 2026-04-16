@@ -6,7 +6,7 @@
 /*                         |_|\_\  \___/  |___/    |_|                        */
 /*                                                                            */
 /*   File:     ui.rs                    Project:  toptui                      */
-/*   Created:  2026-04-03               Updated:  2026-04-06                  */
+/*   Created:  2026-04-03               Updated:  2026-04-16                  */
 /*   License:  MIT OR Apache-2.0                                              */
 /*                                                                            */
 /* ************************************************************************** */
@@ -36,7 +36,11 @@ fn draw_grid(frame: &mut Frame, main_area: Rect, map: &HashMap<u32, Process>, of
     let rows = Layout::vertical(row_slots).split(main_area);
 
     let mut process: Vec<&Process> = map.values().collect();
-    process.sort_by(|a, b| b.cpu.partial_cmp(&a.cpu).unwrap_or(std::cmp::Ordering::Equal));
+    process.sort_by(|a, b| {
+        b.cpu
+            .partial_cmp(&a.cpu)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
 
     let col_slots = vec![Fill(1); grid_columns as usize];
 
@@ -58,11 +62,9 @@ fn draw_grid(frame: &mut Frame, main_area: Rect, map: &HashMap<u32, Process>, of
                 process.name, process.memory_kb, process.cpu, cmd1, cmd2,
             );
             frame.render_widget(
-                Paragraph::new(info).block(Block::bordered().title(format!(
-                    "PID {}  {}",
-                    process.pid.to_string(),
-                    process.user
-                ))),
+                Paragraph::new(info).block(
+                    Block::bordered().title(format!("PID {}  {}", process.pid, process.user)),
+                ),
                 *slot,
             );
         });
@@ -86,7 +88,7 @@ fn draw_filter(frame: &mut Frame, filter_area: Rect) {
 }
 
 pub fn draw(frame: &mut Frame, map: &HashMap<u32, Process>, offset: usize) {
-    let vertical = Layout::vertical([Length(7), Length(3), Min(0)]);
+    let vertical = Layout::vertical([Length(11), Length(3), Min(0)]);
     let [stats_area, filter_area, main_area] = vertical.areas(frame.area());
 
     draw_stats(frame, stats_area);

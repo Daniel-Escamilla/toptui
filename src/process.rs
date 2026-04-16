@@ -6,7 +6,7 @@
 /*                         |_|\_\  \___/  |___/    |_|                        */
 /*                                                                            */
 /*   File:     process.rs               Project:  toptui                      */
-/*   Created:  2026-04-01               Updated:  2026-04-06                  */
+/*   Created:  2026-04-01               Updated:  2026-04-07                  */
 /*   License:  MIT OR Apache-2.0                                              */
 /*                                                                            */
 /* ************************************************************************** */
@@ -110,19 +110,22 @@ fn get_time(seconds: f64) -> (u64, u64, u64, u64) {
 }
 
 impl Process {
-    const TICKS_PER_SECOND: f64 = 200.0;
-
-    pub fn new(pid: u32, utime: f64, uids_table: &[(u32, String)]) -> Result<Self, ()> {
+    pub fn new(
+        pid: u32,
+        utime: f64,
+        uids_table: &[(u32, String)],
+        ticks: f64,
+        refresh_seconds: f64,
+    ) -> Result<Self, ()> {
         let mut process = Process {
             pid,
             ..Default::default()
         };
         process.read_status(uids_table)?;
         process.read_cmdline()?;
-        process.read_stat(utime)?;
+        process.read_stat(utime, ticks, refresh_seconds)?;
         Ok(process)
     }
-
     fn read_status(&mut self, uids_table: &[(u32, String)]) -> Result<(), ()> {
         let status_file =
             fs::read_to_string(format!("/proc/{}/status", self.pid)).map_err(|_| ())?;
@@ -151,7 +154,7 @@ impl Process {
         Ok(())
     }
 
-    pub fn read_stat(&mut self, utime: f64) -> Result<(), ()> {
+    pub fn read_stat(&mut self, utime: f64, ticks: f64, refresh_seconds: f64) -> Result<(), ()> {
         let stat_file = fs::read_to_string(format!("/proc/{}/stat", self.pid)).map_err(|_| ())?;
         let values: Vec<_> = stat_file.split_whitespace().collect();
         self.utime = values.get(13).ok_or(())?.parse::<u64>().map_err(|_| ())?;
@@ -159,7 +162,7 @@ impl Process {
 
         if self.prev_utime != 0 {
             self.cpu = (self.utime + self.stime - self.prev_utime - self.prev_stime) as f64
-                / Self::TICKS_PER_SECOND
+                / (ticks * refresh_seconds)
                 * 100.0;
         }
         self.prev_utime = self.utime;
