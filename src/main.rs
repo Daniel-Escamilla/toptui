@@ -72,10 +72,10 @@ fn main() -> Result<(), ()> {
         loop {
             if event::poll(Duration::from_millis(250)).map_err(|_| ())? {
                 let event = event::read().map_err(|_| ())?;
-                if let Event::Key(key) = event {
-                    if key.code == KeyCode::Char('q') {
-                        break Ok::<(), ()>(());
-                    }
+                if let Event::Key(key) = event
+                    && key.code == KeyCode::Char('q')
+                {
+                    break Ok::<(), ()>(());
                 }
                 if let Event::Mouse(key) = event {
                     if key.kind == MouseEventKind::ScrollDown {
