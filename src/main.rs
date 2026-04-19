@@ -6,7 +6,7 @@
 /*                         |_|\_\  \___/  |___/    |_|                        */
 /*                                                                            */
 /*   File:     main.rs                  Project:  toptui                      */
-/*   Created:  2026-04-01               Updated:  2026-04-16                  */
+/*   Created:  2026-04-01               Updated:  2026-04-19                  */
 /*   License:  MIT OR Apache-2.0                                              */
 /*                                                                            */
 /* ************************************************************************** */
@@ -19,7 +19,7 @@ use ui::draw;
 mod system;
 use system::refresh;
 
-use crossterm::event::{self, EnableMouseCapture, Event, KeyCode, MouseEventKind};
+use crossterm::event::{self, EnableMouseCapture, DisableMouseCapture, Event, KeyCode, MouseEventKind};
 use std::time::Duration;
 
 use std::sync::{Arc, Mutex};
@@ -93,8 +93,7 @@ fn main() -> Result<(), ()> {
             }
         }
     })?;
-
-    crossterm::execute!(std::io::stdout(), crossterm::event::DisableMouseCapture)
+    crossterm::execute!(std::io::stdout(), DisableMouseCapture)
         .map_err(|_| ())?;
     Ok(())
 }
