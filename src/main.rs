@@ -19,7 +19,9 @@ use ui::draw;
 mod system;
 use system::refresh;
 
-use crossterm::event::{self, EnableMouseCapture, DisableMouseCapture, Event, KeyCode, MouseEventKind};
+use crossterm::event::{
+    self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, MouseEventKind,
+};
 use std::time::Duration;
 
 use std::sync::{Arc, Mutex};
@@ -93,7 +95,6 @@ fn main() -> Result<(), ()> {
             }
         }
     })?;
-    crossterm::execute!(std::io::stdout(), DisableMouseCapture)
-        .map_err(|_| ())?;
+    crossterm::execute!(std::io::stdout(), DisableMouseCapture).map_err(|_| ())?;
     Ok(())
 }

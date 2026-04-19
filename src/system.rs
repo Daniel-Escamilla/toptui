@@ -18,8 +18,7 @@ use crate::fs::{self};
 
 use std::collections::HashMap;
 
-#[derive(Default)]
-#[derive(Debug)]
+#[derive(Default, Debug)]
 struct MemoryData {
     mem_total: u64,
     mem_available: u64,
@@ -31,7 +30,7 @@ fn read_meminfo() -> Result<MemoryData, ()> {
     let mut data: MemoryData = Default::default();
     let meminfo_file = fs::read_to_string("/proc/meminfo").map_err(|_| ())?;
     for line in meminfo_file.lines() {
-        let Some(category) = line.split(':').nth(0) else {
+        let Some(category) = line.split(':').next() else {
             continue;
         };
         let category = category.trim();
@@ -57,7 +56,7 @@ pub fn refresh(
     refresh_seconds: f64,
 ) -> Result<(), ()> {
     let pids = get_pids();
-    let mem = read_meminfo()?;
+    let _mem = read_meminfo()?;
     for pid in pids {
         if let std::collections::hash_map::Entry::Vacant(e) = map.entry(pid) {
             if let Ok(process) = Process::new(pid, utime, uids_table, ticks, refresh_seconds) {
